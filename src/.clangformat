@@ -1,0 +1,7 @@
+# This is template code retrieved from the official FXTUI author at
+# https://github.com/ArthurSonzogni/ftxui-starter/blob/master/src/.clang-format
+
+# Defines the Chromium style for automatic reformatting.
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+BasedOnStyle: Chromium
+Standard: Cpp17

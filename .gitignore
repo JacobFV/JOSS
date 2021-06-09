@@ -1,3 +1,6 @@
+build/
+
+## This is github's C++ template
 # Prerequisites
 *.d
 
