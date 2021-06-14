@@ -1,7 +1,6 @@
 #include "view.hpp"
 
 JOSSView::JOSSView() {
-
 }
 
 void JOSSView::refresh() {

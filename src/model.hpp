@@ -1,14 +1,12 @@
 #include "header.hpp"
-#include "view.hpp"
 
 class JOSSModel {
 public:
-    JOSSView* view;
 
     std::string cwd; // does not include trailing `/`
 
-    std::vector<std::string> dirs;
-    std::vector<std::string> files;
+    std::vector<std::string> dirs = std::vector<std::string>();
+    std::vector<std::string> files = std::vector<std::string>();
     Sorting dirsSorting = Sorting::byName;
     Sorting filesSorting = Sorting::byName;
 
@@ -24,9 +22,7 @@ public:
 
     bool isDone = false;
 
-    JOSSModel(JOSSView* view);
-
-    void start();
+    JOSSModel();
 
     void start_new_cmd_line();
     void generate_start_screen();

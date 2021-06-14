@@ -1,29 +1,12 @@
 #include "model.hpp"
 
-JOSSModel::JOSSModel(JOSSView* view)
-    : view(view) {
+JOSSModel::JOSSModel() {
     cwd = get_cwd();
-    files = std::vector<std::string>();
     get_dirs_in_cwd();
     get_files_in_cwd();
-
     generate_start_screen();
 }
 
-void JOSSModel::start() {
-    int key;
-    start_new_cmd_line();
-
-    // main read-eval-print loop
-    while(!isDone) {
-        // get key event
-        key = getchar();
-        // parse
-        handle_key_event(key);
-        // refresh
-        view->refresh();
-    }
-}
 
 void JOSSModel::start_new_cmd_line() {
     cursor_x = 0;
@@ -34,7 +17,6 @@ void JOSSModel::start_new_cmd_line() {
     dirs_pos = 0;
     files_pos = 0;
     terminal_pos = 0;
-    view->refresh();
 }
 
 void JOSSModel::generate_start_screen() {
