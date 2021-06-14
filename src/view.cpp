@@ -12,7 +12,14 @@ JOSSView::JOSSView() {
         return window(text(L" Summary "), content);
     };
 
-    this->document =  //
+    this->document = 
+        vbox({
+            hbox({
+                text() | flex,
+                vbox()
+            })
+        });
+    /*
         vbox({
             hbox({
                 summary(),
@@ -21,10 +28,15 @@ JOSSView::JOSSView() {
             }),
             summary(),
             summary(),
-        });
+        });*/
 }
 
-void JOSSView::refresh() {
+void display(
+    std::string content, 
+    std::vector<std::string> dirs,
+    std::vector<std::string> files,
+    std::string help_text,
+    ) {
     // everything is already defined by now
     Render(screen, document);
     std::cout << screen.ToString() << std::endl;
