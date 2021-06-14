@@ -1,5 +1,6 @@
 #include "header.hpp"
 
+
 class JOSSModel {
 public:
 
@@ -10,39 +11,37 @@ public:
     Sorting dirsSorting = Sorting::byName;
     Sorting filesSorting = Sorting::byName;
 
-    int dirs_pos = 0; // 0 means top
-    int files_pos = 0; // 0 means top
-    int terminal_pos = 0; // 0 means most recent
-    int cursor_x = 0; // 0 means begining of string
-    int cursor_y = 0; // negative based indexing of previous commands. 0 means current line
+    int dirs_pos = 0; // which subset [dirs_pos, dis_pos+5] of dirs to display
+    int files_pos = 0; // which subset [dirs_pos, dis_pos+5] of files to display
+    int cursor_x = 0; // location to insert "_" in string
+    int cursor_y = 0; // which command is being edited
 
-    std::deque<std::string> all_content;
-    std::deque<std::string> all_cmds;
-    std::string curr_cmd = "";
+    std::string all_past_content; // lines should be seaparated by newline chars
+    std::vector<CMD> all_cmds;
 
-    bool isDone = false;
+    bool isDone = false; // signal for controller to terminate the REPL
 
     JOSSModel();
 
-    void start_new_cmd_line();
-    void generate_start_screen();
-
     void handle_key_event(int key);
-    void parse_cmd();
+
+    void start_new_cmd_line();
+    void exec_cmd();
 
     std::string get_cwd();
     std::string get_time();
     std::string get_file_info(std::string filename);
     void edit_file(std::string filename);
     void run_program(std::string filename);
-    void change_directory(std::string dirname); // might be ..
+    void change_directory(std::string dirname); // might be `..`
     void remove_file(std::string filename);
-    void quit();
+    void quit(); // close any resources used
 
     void get_dirs_in_cwd();
     void get_files_in_cwd();
 
-    void print_lines(std::string lines...);
+    CMD curr_cmd();
+    void print_lines(std::vector<std::string> lines);
 };
 
 enum Sorting { byDate, byName };

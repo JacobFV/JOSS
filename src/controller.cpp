@@ -4,7 +4,7 @@
 JOSSController::JOSSController(JOSSView* view, JOSSModel* model)
     : view(view), model(model) { }
 
-void JOSSController::start() {
+void JOSSController::repl() {
     int key;
     model->start_new_cmd_line();
 
@@ -17,31 +17,22 @@ void JOSSController::start() {
         // maybe update viewport
         update_view();
     }
+
+    model->quit();
 }
 
 void JOSSController::update_view() {
-    // grab data from model and put it in the view
+    // grabs data from model and put it in the view
     
-
-    // print to terminal
-    // I will have to modify this code to make 
-    // everything fit vertically and horizontally
-    int terminal_height = ?;
-    view->terminal_content.clear();
-    for(int i = std::max(model->all_content.size - terminal_height, 
-                         terminal_height);
-        i < model->all_content.size; 
-        i++) {
-
-        // wstring conversion: https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t
-        view->terminal_content.append(wstring_converter.from_bytes(line));
-
-        if (i != model->all_content.size-1)
-            view->terminal_content.append(L"\n");
-    }
+    // print terminal content
+    view->set_terminal_content(model->all_past_content + "\n" 
+        + fmt_cmd(model->curr_cmd(), model->cursor_x));
 
     // print dirs
-    view->dirs->
+    view->set_dirs(std::vector<std::string>(
+        model->dirs.begin() + model->dirs_pos, 
+        model->dirs.begin() + model->dirs_pos + // TODO
+    ));
 
     // print files
 
