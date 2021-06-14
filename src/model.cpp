@@ -21,7 +21,7 @@ void JOSSModel::start() {
         // parse
         handle_key_event(key);
         // refresh
-        view->display();
+        view->refresh();
     }
 }
 
@@ -34,7 +34,7 @@ void JOSSModel::start_new_cmd_line() {
     dirs_pos = 0;
     files_pos = 0;
     terminal_pos = 0;
-    view->display();
+    view->refresh();
 }
 
 void JOSSModel::generate_start_screen() {

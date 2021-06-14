@@ -30,6 +30,7 @@ public:
 
     void start_new_cmd_line();
     void generate_start_screen();
+
     void handle_key_event(int key);
     void parse_cmd();
 
