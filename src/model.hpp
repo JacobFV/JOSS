@@ -31,8 +31,8 @@ public:
     void run_program(std::string filename); // run file marked for execution
     void change_directory(std::string dirname); // change directory
     void set_sorting(std::string type); // set sorting for dirs and files
-    std::string display_file(std::string filename); // display file contents in terminal
-    std::string get_file_info(std::string filename); // show system information on file
+    void display_file(std::string filename); // display file contents in terminal
+    void get_file_info(std::string filename); // show system information on file
     void move_file(std::string filename, std::string subdir); // move file to subdir
     void remove_file(std::string filename);// delete file
     void quit(); // quit application
@@ -46,8 +46,8 @@ public:
     // utility functions
     CMD curr_cmd();
     void print_lines(std::vector<std::string> lines);
-    template<class Iterator> int get_dir_id(Iterator it);
-    template<class Iterator> int get_file_id(Iterator it);
+    template<class Iterator> int get_dir_id(Iterator it, std::string cmd);
+    template<class Iterator> int get_file_id(Iterator it, std::string cmd);
 };
 
 enum Sorting { byDate, byName, bySize };

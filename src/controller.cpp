@@ -31,11 +31,10 @@ void JOSSController::update_view() {
 
     // print dirs
     view->set_dirs(
-        model->dirs.begin() + model->dirs_pos, 
-        model->dirs.begin() + std::min(
-            model->dirs_pos + NUM_DIRS,
-            static_cast<int>(model->dirs.size())
-        )
+        model->files.begin() + model->files_pos, 
+        model->files.begin() + std::min(
+            model->files_pos + NUM_FILES,
+            static_cast<int>(model->files.size()))
     );
 
     // print files

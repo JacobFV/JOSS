@@ -23,9 +23,8 @@ void JOSSView::refresh() {
 }
 
 
-template <class Iter> 
-void JOSSView::set_dirs(Iter dir, Iter dirs_end) {
-    static std::string dirs8 = "";
+void JOSSView::set_dirs(std::vector<std::string>::iterator dir, std::vector<std::string>::iterator dirs_end) {
+    std::string dirs8 = "";
     int i = 0;
     while(dir != dirs_end) {
         dirs8.append(std::to_string(i++) + " " + *dir++);
@@ -39,9 +38,8 @@ void JOSSView::set_dirs(Iter dir, Iter dirs_end) {
 }
 
 
-template <class Iter>
-void JOSSView::set_files(Iter file, Iter files_end) {
-    static std::string files8 = "";
+void JOSSView::set_files(std::vector<std::string>::iterator file, std::vector<std::string>::iterator files_end) {
+    std::string files8 = "";
     int i = 0;
     while(file != files_end) {
         files8.append(std::to_string(i++) + " " + *file++);

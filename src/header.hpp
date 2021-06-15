@@ -16,33 +16,12 @@
 #include <string.h>
 #include <time.h>
 
-// for std::string lowercase
-// from https://stackoverflow.com/questions/313970/how-to-convert-an-instance-of-stdstring-to-lower-case
-#include <algorithm>
-#include <cctype>
-#include <string>
-
-std::string make_string_lowercase(std::string string) {
-    // this transform implementation is copied from
-    // https://stackoverflow.com/questions/313970/how-to-convert-an-instance-of-stdstring-to-lower-case
-    //std::transform(string.data.begin(), string.data.end(), string.data.begin(),
-    //    [](unsigned char c){ return std::tolower(c); });
-    //TODO
-    return string;
-}
 
 const int WINDOW_HEIGHT = 5; 
 const int MAX_PATH_SIZE = 65536;
 
 typedef std::pair<std::string, std::string> CMD;
 
-std::string fmt_cmd(CMD cmd, int cursor_x) {
-    // format command consistantly across the program
-    static std::string fmtd_cmd;
-    fmtd_cmd = cmd.first + " $ " + cmd.second;
-    if (cursor_x != -1) fmtd_cmd.insert(cmd.first.length() + 3 + cursor_x, "_");
-    return fmtd_cmd;
-}
 
 const int NUM_DIRS = 5;
 const int NUM_FILES = 5;
@@ -115,31 +94,24 @@ const std::vector<std::string> HELP_MESSAGE = {
 
 const std::string NEWLN = "\n";
 
+extern std::string fmt_cmd(CMD cmd, int cursor_x);
+extern std::string make_string_lowercase(std::string string);
+
 class CommandExecutionException : public std::exception {
 public:
     std::string reason = "";
 
-    CommandExecutionException(std::string reason) {
-        this->reason = reason;
-    }
+    CommandExecutionException(std::string reason);
 
-    const char* what() {
-        return reason.c_str();
-    }
+    const char* what();
 };
-
 class CommandParsingException : public std::exception {
 public:
     std::string reason = "";
 
-    CommandParsingException(std::string reason) {
-        this->reason = reason;
-    }
+    CommandParsingException(std::string reason);
 
-    const char* what() {
-        return reason.c_str();
-    }
+    const char* what();
 };
-
 
 #endif

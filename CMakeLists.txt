@@ -26,7 +26,7 @@ project(joss
   VERSION 1.0.0
 )
 
-add_executable(joss src/main.cpp src/view.cpp src/model.cpp src/controller.cpp)
+add_executable(joss src/main.cpp src/view src/model src/controller src/header src/utils)
 target_include_directories(joss PRIVATE src)
 
 target_link_libraries(joss

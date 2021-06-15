@@ -18,8 +18,8 @@ public:
     int get_terminal_height();
 
     void set_terminal_content(std::string val);
-    template <class Iter> void set_dirs(Iter begin, Iter end);
-    template <class Iter> void set_files(Iter begin, Iter end);
+    void set_dirs(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
+    void set_files(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_help_bar_text(std::string val);
 
 private:

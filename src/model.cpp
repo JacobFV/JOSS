@@ -73,8 +73,6 @@ void JOSSModel::handle_key_event(int key) {
         start_new_cmd_line();
         break;
 
-    case 27: // escape
-        break;
 
     // removing characters
     case 8: // backspace
@@ -188,7 +186,7 @@ void JOSSModel::exec_cmd() {
         // open file in editor
         if(cmd=="e" || 
            cmd=="edit") {
-            get_file_id(pos);
+            edit_file(files[get_file_id(pos, cmd_str)]);
         }
         // run file marked for execution
         else if(cmd == "r" ||
@@ -202,7 +200,7 @@ void JOSSModel::exec_cmd() {
                 cmd == "ch" ||
                 cmd == "cd" ||
                 cmd == "change") {
-            change_directory(dirs[get_dir_id(pos)]);
+            change_directory(dirs[get_dir_id(pos, cmd_str)]);
         }
         // set sorting for dirs and files
         else if(cmd == "s" ||
@@ -215,19 +213,19 @@ void JOSSModel::exec_cmd() {
                 cmd == "display" ||
                 cmd == "cat" ||
                 cmd == "print") {
-            display_file(files[get_file_id(pos)]);
+            display_file(files[get_file_id(pos, cmd_str)]);
         }
         // show system information on file
         else if(cmd == "i" ||
                 cmd == "info") {
-            get_file_info(files[get_file_id(pos)]);
+            get_file_info(files[get_file_id(pos, cmd_str)]);
         }
         // move file to subdir
         else if(cmd == "m" ||
                 cmd == "mv" ||
                 cmd == "move") {
-            auto file = files[get_file_id(pos)];
-            auto dir = dirs[get_dir_id(pos)];
+            auto file = files[get_file_id(pos, cmd_str)];
+            auto dir = dirs[get_dir_id(pos, cmd_str)];
             move_file(file, dir);
         }
         // delete file
@@ -235,7 +233,7 @@ void JOSSModel::exec_cmd() {
                 cmd == "remove" ||
                 cmd == "del" ||
                 cmd == "delete") {
-            remove_file(files[get_file_id(pos)]);
+            remove_file(files[get_file_id(pos, cmd_str)]);
         }
         // quit application
         else if(cmd == "q" ||
@@ -324,7 +322,7 @@ void JOSSModel::set_sorting(std::string type) {
 
 
 // display file contents in terminal
-std::string JOSSModel::display_file(std::string filename) {
+void JOSSModel::display_file(std::string filename) {
     std::fstream file;
     file.open(filename);
     if(file.is_open()) {
@@ -336,7 +334,7 @@ std::string JOSSModel::display_file(std::string filename) {
 
 
 // show system information on file
-std::string JOSSModel::get_file_info(std::string filename) {
+void JOSSModel::get_file_info(std::string filename) {
 
 }
 
@@ -418,25 +416,25 @@ void JOSSModel::print_lines(std::vector<std::string> lines) {
 
 
 template<class Iterator> 
-int get_dir_id(Iterator it, std::string cmd) {
+int JOSSModel::get_dir_id(Iterator it, std::string cmd_str) {
     // look for either a dir name or dirid.
     // On completion `it` points to the first char after the file
     // Then return the fid or throw a 
     // CommandExecutionException("filename `file` does not match any paths")
-    if(it == cmd.end()) throw CommandParsingException("no subdirectory is given");
+    if(it == cmd_str.end()) throw CommandParsingException("no subdirectory is given");
 
-    const std::iterator start = it;
+    const auto start = it;
     while(*it++ != ' ') ;
 
-    auto dir = cmd.substr(start, it-start);
+    auto dirname = cmd_str.substr(start - cmd_str.begin(), it-start);
 
-    // first assume it is a string filename
-    for (auto dirname : dirs) {
-        if(dir == dirname) return dir;
+    // first assume it is a string dirname
+    for (int i = 0; i < dirs.size(); i++) {
+        if(dirs[i] == dirname) return i;
     }
 
     // second try if its a valid integer
-    int dir_num = atoi(filename.c_str());
+    int dir_num = atoi(dirname.c_str());
     if(dir_num == -1) {throw CommandParsingException(
         "no subdirectory identified by `" + dirname + 
         "exists in the working directory");}
@@ -446,21 +444,21 @@ int get_dir_id(Iterator it, std::string cmd) {
 
 
 template<class Iterator> 
-int get_file_id(Iterator it, std::string cmd) {
+int JOSSModel::get_file_id(Iterator it, std::string cmd_str) {
     // look for either a file name or fid.
     // On completion `it` points to the first char after the file
     // Then return the fid or throw a 
     // CommandExecutionException("filename `file` does not match any paths")
-    if(it == cmd.end()) throw CommandParsingException("no file is given");
+    if(it == cmd_str.end()) throw CommandParsingException("no file is given");
 
-    const std::iterator start = it;
+    const auto start = it;
     while(*it++ != ' ') ;
 
-    auto filename = cmd.substr(start, it-start);
+    auto filename = cmd_str.substr(start - cmd_str.begin(), it-start);
 
     // first assume it is a string filename
-    for (auto file : files) {
-        if(file == filename) return file;
+    for (int i = 0; i < files.size(); i++) {
+        if(files[i] == filename) return i;
     }
 
     // second try if its a valid integer
