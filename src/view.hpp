@@ -18,16 +18,16 @@ public:
     int get_terminal_height();
 
     void set_terminal_content(std::string val);
-    void set_dirs(std::vector<std::string> files);
-    void set_files(std::vector<std::string> files);
+    template <class Iter> void set_dirs(Iter begin, Iter end);
+    template <class Iter> void set_files(Iter begin, Iter end);
     void set_help_bar_text(std::string val);
 
 private:
     // use newlines to separate elements
+    // TODO: maybe completely remove std::wstring's
     std::wstring terminal_content;
-    std::wstring dirs;
-    std::wstring files;
-    std::wstring help_bar_text;
+    std::wstring dirs_content;
+    std::wstring files_content;
     // wstring conversion: https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wstring_converter; 
 
@@ -35,12 +35,12 @@ private:
             hbox({
                 text(terminal_content) | flex,
                 vbox({
-                    text(dirs), 
+                    text(dirs_content), 
                     separator(),
-                    text(files),
+                    text(files_content),
                 })
             }),
-            text(help_bar_text),
+            text(HELP_BAR_TEXT),
         });
     Screen screen = Screen::Create(Dimension::Full(), Dimension::Full());
 };

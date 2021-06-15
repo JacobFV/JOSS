@@ -29,14 +29,22 @@ void JOSSController::update_view() {
         + fmt_cmd(model->curr_cmd(), model->cursor_x));
 
     // print dirs
-    view->set_dirs(std::vector<std::string>(
+    view->set_dirs(
         model->dirs.begin() + model->dirs_pos, 
-        model->dirs.begin() + model->dirs_pos + // TODO
-    ));
+        model->dirs.begin() + std::min(
+            model->dirs_pos + NUM_DIRS,
+            static_cast<int>(model->dirs.size())
+        )
+    );
 
     // print files
-
-    // set help bar text
+    view->set_files(
+        model->files.begin() + model->files_pos, 
+        model->files.begin() + std::min(
+            model->files_pos + NUM_FILES,
+            static_cast<int>(model->files.size())
+        )
+    );
 
     view->refresh(); // TODO: this may not be necesary
 }
