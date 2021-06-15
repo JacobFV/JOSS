@@ -3,7 +3,6 @@
 JOSSModel::JOSSModel() {
     // Initializes JOSSModel
 
-    cwd = get_cwd();
     update_dirs_listing();
     update_files_listing();
 
@@ -24,7 +23,7 @@ void JOSSModel::handle_key_event(int key) {
 
         // if previous command was just the move up or down operation 
         // for the sidebar windows, don't actually execute it
-        bool did_only_move = false;
+        bool did_only_move; did_only_move = false;
         switch(curr_cmd().second[0]) {
             // move displayed files and dirs sublist windows up and down
             case 'N': // previous
@@ -140,7 +139,6 @@ void JOSSModel::start_new_cmd_line() {
     // Configures the internal state of `this` such that the
     // console will have a new empty current command
 
-    cwd = get_cwd();
     update_dirs_listing();
     update_files_listing();
 
@@ -163,8 +161,8 @@ void JOSSModel::exec_cmd() {
     // Executes the current command
 
     // the compiler ends up linking a pointer either way
-    // but inline makes code more readable
-    inline auto cmd_str = curr_cmd().second;
+    // but  makes code more readable
+     auto cmd_str = curr_cmd().second;
 
     // content checking
     if(curr_cmd().second.length() == 0) return; // empty command
@@ -185,7 +183,7 @@ void JOSSModel::exec_cmd() {
         auto pos = cmd_str.begin();
         
         while (*pos++ != ' ') ;
-        inline auto cmd = make_string_lowercase(cmd_str.substr(0, pos-cmd_str.begin()));
+         auto cmd = make_string_lowercase(cmd_str.substr(0, pos-cmd_str.begin()));
 
         // open file in editor
         if(cmd=="e" || 
@@ -244,7 +242,7 @@ void JOSSModel::exec_cmd() {
                 cmd == "quit" ||
                 cmd == "exit" ||
                 cmd == "goodbye") {
-            quit()
+            quit();
         }
         else if(cmd == "t" ||
                 cmd == "time") {
@@ -261,23 +259,21 @@ void JOSSModel::exec_cmd() {
 
     // print any error that occurs during parsing to the terminal
     } catch (CommandParsingException& err) {
-        print_lines({"Error parsing command: " + err.what()});
+        print_lines({"Error parsing command: " +std::string( err.what())});
     } catch (CommandExecutionException& err) {
-        print_lines({"Error during command execution: " + err.what()});
+        print_lines({"Error during command execution: " + std::string(err.what())});
     } catch (std::bad_alloc& err) {
-        print_lines({"bad_alloc: " + err.what()});
+        print_lines({"bad_alloc: " + std::string(err.what())});
     } catch (std::bad_cast err) {
-        print_lines({"bad_cast: " + err.what()});
+        print_lines({"bad_cast: " + std::string(err.what())});
     } catch (std::bad_function_call err) {
-        print_lines({"bad_function_call: " + err.what()});
+        print_lines({"bad_function_call: " + std::string(err.what())});
     } catch (std::logic_error err) {
-        print_lines({"logic_error: " + err.what()});
+        print_lines({"logic_error: " + std::string(err.what())});
     } catch (std::runtime_error err) {
-        print_lines({"runtime_error: " + err.what()});
+        print_lines({"runtime_error: " + std::string(err.what())});
     } catch (std::bad_exception err) {
-        print_lines({"bad_exception: " + err.what()});
-    } catch(std::exception& e) {
-        print_lines("Error: " + e.what());
+        print_lines({"bad_exception: " +std::string( err.what())});
     } catch (...) {
         print_lines({"An error occured."});
     }
@@ -309,13 +305,13 @@ void JOSSModel::change_directory(std::string dirname) {
 // set sorting for dirs and files
 void JOSSModel::set_sorting(std::string type) {
     if(type == "name" || "n") {
-        sorting = Sorting::byName;
+        //sorting = Sorting::byName;
     }
     else if(type == "size" || "s") {
-        sorting = Sorting::bySize;
+        //sorting = Sorting::bySize;
     }
     else if(type == "date" || "d") {
-        sorting = Sorting::byDate;
+        //sorting = Sorting::byDate;
     }
     else throw new CommandParsingException(
         "Please specify a sorting method (name/date/size): ex: \"sort name\".");
@@ -408,7 +404,7 @@ void JOSSModel::update_files_listing() {
 }
 
 
-inline CMD JOSSModel::curr_cmd() {
+ CMD JOSSModel::curr_cmd() {
     return all_cmds[cursor_y];
 }
 
@@ -435,13 +431,13 @@ int get_dir_id(Iterator it, std::string cmd) {
     auto dir = cmd.substr(start, it-start);
 
     // first assume it is a string filename
-    for (auto dir : dirs) {
+    for (auto dirname : dirs) {
         if(dir == dirname) return dir;
     }
 
     // second try if its a valid integer
     int dir_num = atoi(filename.c_str());
-    if(dir_num == -1) {raise CommandParsingException(
+    if(dir_num == -1) {throw CommandParsingException(
         "no subdirectory identified by `" + dirname + 
         "exists in the working directory");}
 
@@ -469,7 +465,7 @@ int get_file_id(Iterator it, std::string cmd) {
 
     // second try if its a valid integer
     int file_num = atoi(filename.c_str());
-    if(file_num == -1) {raise CommandParsingException(
+    if(file_num == -1) {throw CommandParsingException(
         "no file identified by `" + filename + 
         "exists in the working directory");}
 

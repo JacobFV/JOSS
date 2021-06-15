@@ -6,6 +6,7 @@
 #include <iostream>
 #include <regex>
 #include <exception>
+#include <csignal>
 #include <fstream>
 #include <iostream>
 
@@ -24,9 +25,9 @@
 std::string make_string_lowercase(std::string string) {
     // this transform implementation is copied from
     // https://stackoverflow.com/questions/313970/how-to-convert-an-instance-of-stdstring-to-lower-case
-    std::transform(string.data.begin(), string.data.end(), string.data.begin(),
-        [](unsigned char c){ return std::tolower(c); });
-
+    //std::transform(string.data.begin(), string.data.end(), string.data.begin(),
+    //    [](unsigned char c){ return std::tolower(c); });
+    //TODO
     return string;
 }
 
@@ -47,7 +48,7 @@ const int NUM_DIRS = 5;
 const int NUM_FILES = 5;
 
 const std::wstring HELP_BAR_TEXT = 
-    "E edit | R run | C cd | S sort | I info | D display | M move | R remove | Q quit | N next | P prev | H help";
+    L"E edit | R run | C cd | S sort | I info | D display | M move | R remove | Q quit | N next | P prev | H help";
 
 // generated from https://patorjk.com/software/taag/#p=display&f=Impossible&t=Joss
 const std::vector<std::string> WELCOME_CONTENT = {
@@ -64,8 +65,8 @@ const std::vector<std::string> WELCOME_CONTENT = {
         " \\/_______/   \\/_________/   \\_____\\/    \\_____\\/        ",                              
         "   Jacob's      Operating      System      Shell         ",
         "",
-        "Welcome to JOSS! Please use key bindings listed on the bottom bar" +
-        " and directory/file identifiers listed in the right panel to interface" +
+        "Welcome to JOSS! Please use key bindings listed on the bottom bar",
+        " and directory/file identifiers listed in the right panel to interface",
         " with your operating system.",
         "Use the N and P commands to browse through the working directory.",
         "Use up, down, right, left arrow keys to navigate through command history."

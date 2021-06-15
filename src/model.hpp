@@ -8,7 +8,7 @@ public:
 
     std::vector<std::string> dirs = std::vector<std::string>();
     std::vector<std::string> files = std::vector<std::string>();
-    Sorting sorting = Sorting::byName;
+    //enum Sorting sorting = Sorting::byName;
 
     int dirs_pos = 0; // which subset [dirs_pos, dis_pos+5] of dirs to display
     int files_pos = 0; // which subset [dirs_pos, dis_pos+5] of files to display

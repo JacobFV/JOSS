@@ -1,8 +1,9 @@
 #include "controller.hpp"
 
-
-JOSSController::JOSSController(JOSSView* view, JOSSModel* model)
-    : view(view), model(model) { }
+JOSSController::JOSSController() {
+    view = new JOSSView();
+    model = new JOSSModel();
+}
 
 void JOSSController::repl() {
     int key;

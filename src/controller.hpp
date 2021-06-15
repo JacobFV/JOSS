@@ -4,7 +4,7 @@
 
 class JOSSController {
 public:
-    JOSSController(JOSSView* view, JOSSModel* model);
+    JOSSController();
 
     void repl();
 
@@ -13,4 +13,4 @@ private:
     JOSSModel* model;
 
     void update_view();
-}
+};
