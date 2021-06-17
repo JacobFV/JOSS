@@ -10,7 +10,7 @@ JOSSModel::JOSSModel() {
 }
 
 
-void JOSSModel::handle_key_event(int key) {
+void JOSSModel::handle_key_event(char key) {
     // Covers all the logic required to properly respond to an incoming key
     // by typing characters, executing commands, navigating, etc.
 
@@ -91,7 +91,12 @@ void JOSSModel::handle_key_event(int key) {
         // on display: 0123_456 -> 0123_56
         // curr_cmd:   0123456  -> 012356
         // cursor_x:      4     ->    4
-        if (cursor_x != curr_cmd().second.length()-1) {
+        if (cursor_x == curr_cmd().second.length()-1) {
+            curr_cmd().second.assign(
+                curr_cmd().second.substr(0, 
+                    curr_cmd().second.length()-1));
+        } 
+        else {
             curr_cmd().second.assign(
                 curr_cmd().second.substr(0, cursor_x) +
                 curr_cmd().second.substr(cursor_x+1)
@@ -123,11 +128,13 @@ void JOSSModel::handle_key_event(int key) {
 
     // data input    
     default: // a valid character
+        std::cout << "regular char" << std::endl;
         // curr_cmd: 0123_456 -> 0123x_456
         // cursor_x:     4    ->      5
-        static char ch = key; // `insert` requires an lvalue char
+        char ch = key; // `insert` requires an lvalue char
         curr_cmd().second.insert(static_cast<size_t>(cursor_x), &ch);
         cursor_x++;
+        std::cout << "processed char" << std::endl;
         break;
     }
 }
@@ -372,6 +379,7 @@ std::string JOSSModel::get_time() {
 
 void JOSSModel::update_dirs_listing() {
     dirs.clear();
+    dirs.push_back("..");
 
     // modified from assignment 1 template
     struct dirent* de;

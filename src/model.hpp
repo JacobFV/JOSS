@@ -22,7 +22,7 @@ public:
 
     JOSSModel();
 
-    void handle_key_event(int key);
+    void handle_key_event(char key);
 
     void start_new_cmd_line();
     void exec_cmd();

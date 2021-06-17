@@ -6,15 +6,19 @@ JOSSController::JOSSController() {
 }
 
 void JOSSController::repl() {
-    int key;
+    char key; 
+    //std::string s;
     model->start_new_cmd_line();
 
     // main read-eval-print loop
     while(!model->isDone) {
+
         // get key event
-        key = getchar();
+        // TODO
+        key = 'h';
         // parse
         model->handle_key_event(key);
+        std::cout << "Handled key" << std::endl;
         // maybe update viewport
         update_view();
     }

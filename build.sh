@@ -2,5 +2,5 @@ cd build
 cmake ..
 make -j3
 echo "built"
-./joss
+./joss # << "QUIT"
 echo "done"
