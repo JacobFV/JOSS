@@ -1,6 +1,7 @@
+echo "building\n"
 cd build
 cmake ..
 make -j3
-echo "built"
-./joss # << "QUIT"
-echo "done"
+echo "built\n"
+#./joss # << "QUIT"
+#echo "done"
