@@ -8,15 +8,14 @@
 
 class JOSSController {
 public:
-    JOSSController();
-
-    void repl();
-
-private:
     JOSSView* view;
     JOSSModel* model;
+    
+    JOSSController();
 
+    void start();
     void update_view();
+    void handle_enter(std::string cmd);
 };
 
 #endif

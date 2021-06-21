@@ -5,7 +5,7 @@ int main(int argc, const char **argp) {
 
   JOSSController* controller = new JOSSController();
 
-  controller->repl();
+  controller->start();
 
   return EXIT_SUCCESS;
 }

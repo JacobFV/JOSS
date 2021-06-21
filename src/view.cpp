@@ -1,4 +1,9 @@
+#ifndef JOSS_VIEW_DEF
+#define JOSS_VIEW_DEF
+
+
 #include "view.hpp"
+
 
 JOSSView::JOSSView() {
     
@@ -19,11 +24,9 @@ void JOSSView::refresh() {
 }
 
 
-void JOSSView::set_terminal_content(std::vector<std::string> lines,
-                                    std::string* cwd, 
-                                    void *(call_fn)(std::string cmd)) {
+void JOSSView::set_terminal_content(JOSSController* controller) {
     terminal_lines_texts.clear();
-    for(auto line : lines) {
+    for(auto line : controller->model->all_past_terminal_content) {
         terminal_lines_texts.push_back(
             ftxui::text(to_wstring(line)));
     }
@@ -32,11 +35,11 @@ void JOSSView::set_terminal_content(std::vector<std::string> lines,
     std::wstring input_contents;
     input = ftxui::Input(&input_contents, "");
     ftxui::InputBase::From(input)->on_enter = [&] {
-        call_fn(ftxui::to_string(input_contents));
+        controller->handle_enter(ftxui::to_string(input_contents));
     };
     terminal_lines_texts.push_back(
         ftxui::hbox({
-            ftxui::text(ftxui::to_wstring(*cwd + " $ ")),
+            ftxui::text(ftxui::to_wstring(controller->model->cwd + " $ ")),
             input->Render()
         })
     );
@@ -63,3 +66,5 @@ void JOSSView::set_files(std::vector<std::string>::iterator file,
             ftxui::text(to_wstring(std::to_string(i++) + " " + *file++)));
     }
 }
+
+#endif

@@ -2,6 +2,7 @@
 #define JOSS_MODEL
 
 #include "header.hpp"
+#include "controller.hpp"
 
 
 class JOSSModel {
@@ -15,20 +16,14 @@ public:
 
     int dirs_pos = 0; // which subset [dirs_pos, dis_pos+5] of dirs to display
     int files_pos = 0; // which subset [dirs_pos, dis_pos+5] of files to display
-    int cursor_x = 0; // location to insert "_" in string
-    int cursor_y = 0; // which command is being edited
 
-    std::string all_past_content; // lines should be seaparated by newline chars
-    std::vector<CMD> all_cmds;
-
-    bool isDone = false; // signal for controller to terminate the REPL
+    std::vector<std::string> all_past_terminal_content;
 
     JOSSModel();
 
-    void handle_key_event(char key);
-
+    void handle_enter(std::string cmd);
     void start_new_cmd_line();
-    void exec_cmd();
+    void exec_cmd(std::string cmd);
 
     void edit_file(std::string filename); // open file in editor
     void run_program(std::string filename); // run file marked for execution
@@ -47,7 +42,6 @@ public:
     void update_files_listing();
 
     // utility functions
-    CMD curr_cmd();
     void print_lines(std::vector<std::string> lines);
     template<class Iterator> int get_dir_id(Iterator it, std::string cmd);
     template<class Iterator> int get_file_id(Iterator it, std::string cmd);

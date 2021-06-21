@@ -1,39 +1,20 @@
+#ifndef JOSS_CONTROLLER_DEF
+#define JOSS_CONTROLLER_DEF
+
 #include "controller.hpp"
+
 
 JOSSController::JOSSController() {
     view = new JOSSView();
     model = new JOSSModel();
 }
 
-void JOSSController::repl() {
-    char key; 
-    //std::string s;
-    model->start_new_cmd_line();
+void JOSSController::start() {
     update_view();
-
-    // main read-eval-print loop
-    while(!model->isDone) {
-
-        // get key event
-        // TODO
-        key = 'h';
-        sleep(3);
-        // parse
-        model->handle_key_event(key);
-        //std::cout << "Handled key" << std::endl;
-        // maybe update viewport
-        update_view();
-    }
-
-    model->quit();
 }
 
 void JOSSController::update_view() {
     // grabs data from model and put it in the view
-    
-    // print terminal content
-    view->set_terminal_content(model->all_past_content + "\n" 
-        + fmt_cmd(model->curr_cmd(), model->cursor_x));
 
     // print dirs
     view->set_dirs(
@@ -52,5 +33,19 @@ void JOSSController::update_view() {
         )
     );
 
+    // print terminal content
+    view->set_terminal_content(this);
+
     view->refresh(); // TODO: this may not be necesary
 }
+
+
+void JOSSController::handle_enter(std::string cmd) {
+    // just enter logic
+    model->print_lines({model->cwd + " $ " + cmd});
+    model->exec_cmd(cmd);
+    model->start_new_cmd_line();
+    update_view();
+}
+
+#endif

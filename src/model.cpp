@@ -1,4 +1,9 @@
+#ifndef JOSS_MODEL_DEF
+#define JOSS_MODEL_DEF
+
+
 #include "model.hpp"
+
 
 JOSSModel::JOSSModel() {
     // Initializes JOSSModel
@@ -7,21 +12,53 @@ JOSSModel::JOSSModel() {
     update_files_listing();
 
     print_lines(WELCOME_CONTENT);
+    start_new_cmd_line();
 }
 
 
-void JOSSModel::handle_key_event(char key) {
-    // THIS FUNCTION IS DEPRECATED AND REPLACED BY A `ftxui::input` COMPONENT
+void JOSSModel::start_new_cmd_line() {
+    // Configures the internal state of `this` such that the
+    // console will have a new empty current command
 
-    // Covers all the logic required to properly respond to an incoming key
-    // by typing characters, executing commands, navigating, etc.
+    update_dirs_listing();
+    update_files_listing();
 
-    if (key == -1 || key > 255) return; // error reading key or non-ansi key
+    // try to minimally adjust the window positions
+    if(dirs.size() > WINDOW_HEIGHT && dirs_pos == dirs.size() - WINDOW_HEIGHT) 
+        dirs_pos = dirs.size() - WINDOW_HEIGHT;
+    else if(dirs_pos < 0) dirs_pos = 0;
+    if(files.size() > WINDOW_HEIGHT && files_pos == files.size() - WINDOW_HEIGHT) 
+        files_pos = files.size() - WINDOW_HEIGHT;
+    else if(files_pos < 0) files_pos = 0;
+}
 
-    switch (key)
-    {
-    case 10: // enter
-        // maybe execute command
+
+void JOSSModel::exec_cmd(std::string cmd) {
+    // Executes the current command
+
+    // content checking
+    if(cmd.length() == 0) return; // empty command
+
+    // attempt to parse command
+    try {
+
+        // replace multiple spaces
+        std::regex_replace(cmd, std::regex(" +"), " ");
+
+        // Special Case: If the user types "./path/to/local/file"
+        // replace "./" with "execute " and with logic below
+        if(cmd.length() > 2 && cmd.substr(0,2) == "./") {
+            cmd.assign("run " + cmd.substr(2));
+        }
+
+        // general case
+        auto pos = cmd.begin();
+        
+        while (*pos++ != ' ') ;
+            auto cmd_cmd = make_string_lowercase(cmd.substr(0, pos-cmd.begin()));
+
+        // TODO: p prev and n next
+        /*// maybe execute command
 
         // if previous command was just the move up or down operation 
         // for the sidebar windows, don't actually execute it
@@ -47,222 +84,83 @@ void JOSSModel::handle_key_event(char key) {
             curr_cmd()->second.assign("");
             break;
         } 
-/*
-        if(did_only_move) {
-            //if(dirs_pos < 0) dirs_pos++;
-            //if(dirs.size() > WINDOW_HEIGHT && dirs_pos == dirs.size() - WINDOW_HEIGHT) dirs_pos--;
-            //if(files_pos < 0) files_pos++;
-            //if(files.size() > WINDOW_HEIGHT && files_pos == files.size() - WINDOW_HEIGHT) files_pos--;
-
-            curr_cmd()->second.assign("");
-
-            // we only moved the window so break and don't execute the command
-            break;
-        }*/
-
-
-        // if the command executed was not the actual last command,
-        // it should now become the most recently executed command
-        // for historical (uparrow, downarrow) reasons
-        all_cmds[all_cmds.size() - 1]->first.assign(all_cmds[cursor_y]->first);
-        all_cmds[all_cmds.size() - 1]->second.assign(all_cmds[cursor_y]->second);
-        cursor_y = all_cmds.size() - 1;
-        // now the most recent command is the one executed regardless
-        // of previous cursor navigation through history
-
-        // normally the controller does this, but now 
-        // the directory will be burned into the string all_past_content
-        all_past_content.append(NEWLN + fmt_cmd(curr_cmd(), -1));
+        
+        print_lines({fmt_cmd(curr_cmd(), -1)});
 
         exec_cmd(); 
         
-        start_new_cmd_line();
-        break;
-
-
-    // removing characters
-    case 8: // backspace
-        // on display: 0123_456 -> 012_456
-        // curr_cmd:   0123456  -> 012456
-        // cursor_x:      4     ->    3 
-        if (cursor_x != 0) {
-            curr_cmd()->second.assign(
-                curr_cmd()->second.substr(0, cursor_x-1) +
-                curr_cmd()->second.substr(cursor_x)
-            );
-            cursor_x--;
-        }
-        break;
-    case 127: // delete
-        // on display: 0123_456 -> 0123_56
-        // curr_cmd:   0123456  -> 012356
-        // cursor_x:      4     ->    4
-        if (cursor_x == curr_cmd()->second.length()-1) {
-            curr_cmd()->second.assign(
-                curr_cmd()->second.substr(0, 
-                    curr_cmd()->second.length()-1));
-        } 
-        else {
-            curr_cmd()->second.assign(
-                curr_cmd()->second.substr(0, cursor_x) +
-                curr_cmd()->second.substr(cursor_x+1)
-            );
-        }
-        break;
-
-    // browse/edit previous commands
-    case 24: // up arrow
-        cursor_y++;
-        if (cursor_y == all_cmds.size()) cursor_y = all_cmds.size();
-        cursor_x = curr_cmd()->second.length();
-        break;
-    case 25: // down arrow
-        cursor_y--;
-        if (cursor_y < 0) cursor_y = 0;
-        cursor_x = curr_cmd()->second.length();
-        break;
-
-    // move cursor "_" left and right
-    case 26: // right arrow
-        cursor_x++;
-        if (cursor_x == curr_cmd()->second.length()) cursor_x = curr_cmd()->second.length();
-        break;
-    case 27: // left arrow
-        cursor_x--;
-        if (cursor_x < 0) cursor_x = 0;
-        break;
-
-    // data input    
-    default: // a valid character
-        // curr_cmd: 0123_456 -> 0123x_456
-        // cursor_x:     4    ->      5
-        curr_cmd()->second.insert(cursor_x, 1, key);
-        cursor_x++;
-        break;
-    }
-}
-
-
-void JOSSModel::start_new_cmd_line() {
-    // Configures the internal state of `this` such that the
-    // console will have a new empty current command
-
-    update_dirs_listing();
-    update_files_listing();
-
-    all_cmds.push_back(new std::pair<std::string, std::string>(cwd, ""));
-
-    cursor_x = 0;
-    cursor_y = all_cmds.size() - 1;
-    
-    // try to minimally adjust the window positions
-    if(dirs.size() > WINDOW_HEIGHT && dirs_pos == dirs.size() - WINDOW_HEIGHT) 
-        dirs_pos = dirs.size() - WINDOW_HEIGHT;
-    else if(dirs_pos < 0) dirs_pos = 0;
-    if(files.size() > WINDOW_HEIGHT && files_pos == files.size() - WINDOW_HEIGHT) 
-        files_pos = files.size() - WINDOW_HEIGHT;
-    else if(files_pos < 0) files_pos = 0;
-}
-
-
-void JOSSModel::exec_cmd() {
-    // Executes the current command
-
-    // the compiler ends up linking a pointer either way
-    // but  makes code more readable
-     auto cmd_str = curr_cmd()->second;
-
-    // content checking
-    if(curr_cmd()->second.length() == 0) return; // empty command
-
-    // attempt to parse command
-    try {
-
-        // replace multiple spaces
-        std::regex_replace(cmd_str, std::regex(" +"), " ");
-
-        // Special Case: If the user types "./path/to/local/file"
-        // replace "./" with "execute " and with logic below
-        if(cmd_str.length() > 2 && cmd_str.substr(0,2) == "./") {
-            cmd_str.assign("run " + cmd_str.substr(2));
-        }
-
-        // general case
-        auto pos = cmd_str.begin();
-        
-        while (*pos++ != ' ') ;
-         auto cmd = make_string_lowercase(cmd_str.substr(0, pos-cmd_str.begin()));
+        start_new_cmd_line();*/
 
         // open file in editor
-        if(cmd=="e" || 
-           cmd=="edit") {
-            edit_file(files[get_file_id(pos, cmd_str)]);
+        if(cmd_cmd=="e" || 
+           cmd_cmd=="edit") {
+            edit_file(files[get_file_id(pos, cmd)]);
         }
         // run file marked for execution
-        else if(cmd == "r" ||
-                cmd == "run" ||
-                cmd == "x" ||
-                cmd == "execute") {
-            run_program(cmd_str.substr(pos - cmd_str.begin()));
+        else if(cmd_cmd == "r" ||
+                cmd_cmd == "run" ||
+                cmd_cmd == "x" ||
+                cmd_cmd == "execute") {
+            run_program(cmd.substr(pos - cmd.begin()));
         }
         // change directory
-        else if(cmd == "c" ||
-                cmd == "ch" ||
-                cmd == "cd" ||
-                cmd == "change") {
-            change_directory(dirs[get_dir_id(pos, cmd_str)]);
+        else if(cmd_cmd == "c" ||
+                cmd_cmd == "ch" ||
+                cmd_cmd == "cd" ||
+                cmd_cmd == "change") {
+            change_directory(dirs[get_dir_id(pos, cmd)]);
         }
         // set sorting for dirs and files
-        else if(cmd == "s" ||
-                cmd == "sort") {
-            set_sorting(cmd_str.substr(pos - cmd_str.begin()));
+        else if(cmd_cmd == "s" ||
+                cmd_cmd == "sort") {
+            set_sorting(cmd.substr(pos - cmd.begin()));
         }
         // display file contents in terminal
-        else if(cmd == "d" ||
-                cmd == "disp" ||
-                cmd == "display" ||
-                cmd == "cat" ||
-                cmd == "print") {
-            display_file(files[get_file_id(pos, cmd_str)]);
+        else if(cmd_cmd == "d" ||
+                cmd_cmd == "disp" ||
+                cmd_cmd == "display" ||
+                cmd_cmd == "cat" ||
+                cmd_cmd == "print") {
+            display_file(files[get_file_id(pos, cmd)]);
         }
         // show system information on file
-        else if(cmd == "i" ||
-                cmd == "info") {
-            get_file_info(files[get_file_id(pos, cmd_str)]);
+        else if(cmd_cmd == "i" ||
+                cmd_cmd == "info") {
+            get_file_info(files[get_file_id(pos, cmd)]);
         }
         // move file to subdir
-        else if(cmd == "m" ||
-                cmd == "mv" ||
-                cmd == "move") {
-            auto file = files[get_file_id(pos, cmd_str)];
-            auto dir = dirs[get_dir_id(pos, cmd_str)];
+        else if(cmd_cmd == "m" ||
+                cmd_cmd == "mv" ||
+                cmd_cmd == "move") {
+            auto file = files[get_file_id(pos, cmd)];
+            auto dir = dirs[get_dir_id(pos, cmd)];
             move_file(file, dir);
         }
         // delete file
-        else if(cmd == "r" ||
-                cmd == "remove" ||
-                cmd == "del" ||
-                cmd == "delete") {
-            remove_file(files[get_file_id(pos, cmd_str)]);
+        else if(cmd_cmd == "r" ||
+                cmd_cmd == "remove" ||
+                cmd_cmd == "del" ||
+                cmd_cmd == "delete") {
+            remove_file(files[get_file_id(pos, cmd)]);
         }
         // quit application
-        else if(cmd == "q" ||
-                cmd == "quit" ||
-                cmd == "exit" ||
-                cmd == "goodbye") {
+        else if(cmd_cmd == "q" ||
+                cmd_cmd == "quit" ||
+                cmd_cmd == "exit" ||
+                cmd_cmd == "goodbye") {
             quit();
         }
-        else if(cmd == "t" ||
-                cmd == "time") {
+        else if(cmd_cmd == "t" ||
+                cmd_cmd == "time") {
             print_lines({"The time is " + get_time()});
         }
         // print help information
-        else if(cmd == "h" ||
-                cmd == "help") {
+        else if(cmd_cmd == "h" ||
+                cmd_cmd == "help") {
             print_help();
         }
         else {
-            throw new CommandParsingException("command `" + cmd + "` not recognized. See HELP");
+            throw new CommandParsingException("command `" + cmd_cmd + "` not recognized. See HELP");
         }
 
     // print any error that occurs during parsing to the terminal
@@ -364,7 +262,7 @@ void JOSSModel::remove_file(std::string filename) {
 // quit application
 void JOSSModel::quit() {
     print_lines({"Goodbye!"});
-    isDone = true;
+    exit(EXIT_SUCCESS);
 }
 
 
@@ -412,15 +310,9 @@ void JOSSModel::update_files_listing() {
 }
 
 
-CMD JOSSModel::curr_cmd() {
-    return all_cmds[cursor_y];
-}
-
 void JOSSModel::print_lines(std::vector<std::string> lines) {
-    auto it = lines.begin();
-    while(it != lines.end()) {
-        all_past_content.append(*it++);
-        if(it != lines.end()) all_past_content.append(NEWLN);
+    for(auto line : lines) {
+        all_past_terminal_content.push_back(std::string(line));
     }
 }
 
@@ -479,3 +371,5 @@ int JOSSModel::get_file_id(Iterator it, std::string cmd_str) {
 
     return file_num;
 }
+
+#endif

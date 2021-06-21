@@ -2,6 +2,7 @@
 #define JOSS_VIEW
 
 #include "header.hpp"
+#include "controller.hpp"
 
 #include "ftxui/dom/node.hpp"
 #include "ftxui/dom/elements.hpp"
@@ -20,9 +21,7 @@ public:
 
     void refresh();
     int get_terminal_height();
-    void set_terminal_content(std::vector<std::string> lines,
-                              std::string* cwd, 
-                              void *(call_fn)(std::string cmd));
+    void set_terminal_content(JOSSController* controller);
     void set_dirs(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_files(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_help_bar_text(std::string val);

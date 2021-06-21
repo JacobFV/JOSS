@@ -18,11 +18,12 @@
 #include <time.h>
 
 
+class JOSSView;
+class JOSSModel;
+class JOSSController;
+
 const int WINDOW_HEIGHT = 5; 
 const int MAX_PATH_SIZE = 65536;
-
-typedef std::pair<std::string, std::string>* CMD;
-
 
 const int NUM_DIRS = 5;
 const int NUM_FILES = 5;
@@ -95,7 +96,6 @@ const std::vector<std::string> HELP_MESSAGE = {
 
 const std::string NEWLN = "\n";
 
-extern std::string fmt_cmd(CMD cmd, int cursor_x);
 extern std::string make_string_lowercase(std::string string);
 
 class CommandExecutionException : public std::exception {

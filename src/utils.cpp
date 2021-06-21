@@ -15,16 +15,6 @@ std::string make_string_lowercase(std::string string) {
     return string;
 }
 
-std::string fmt_cmd(CMD cmd, int cursor_x) {
-    // format command consistantly across the program
-    std::string fmtd_cmd = cmd->first + " $ " + cmd->second;
-    if (cursor_x != -1) {
-        fmtd_cmd.insert(cmd->first.length() + 3 + cursor_x, "_");
-    }
-    return fmtd_cmd;
-}
-
-
 CommandExecutionException::CommandExecutionException(std::string reason) {
     this->reason = reason;
 }
