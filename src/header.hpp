@@ -9,6 +9,7 @@
 #include <csignal>
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 // copied from assignment1 template
 #include <unistd.h>
@@ -20,7 +21,7 @@
 const int WINDOW_HEIGHT = 5; 
 const int MAX_PATH_SIZE = 65536;
 
-typedef std::pair<std::string, std::string> CMD;
+typedef std::pair<std::string, std::string>* CMD;
 
 
 const int NUM_DIRS = 5;

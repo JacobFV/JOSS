@@ -1,11 +1,11 @@
-#include <locale>  // These imports come from a stackoverflow answer on how to 
-#include <codecvt> // portably convert from std::string to std::wstring
-#include <string>  // https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t
-
 #include "header.hpp"
 
+#include "ftxui/dom/node.hpp"
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/screen/string.hpp"
+#include "ftxui/screen/box.hpp"
+#include "ftxui/component/component.hpp"
+#include "ftxui/component/screen_interactive.hpp"
 
 using namespace ftxui;
 
@@ -24,23 +24,25 @@ public:
 
 private:
     // use newlines to separate elements
-    // TODO: maybe completely remove std::wstring's
     std::wstring terminal_content;
     std::wstring dirs_content;
     std::wstring files_content;
-    // wstring conversion: https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wstring_converter; 
+    int panel_size = 24;
 
-    Element document = vbox({
-            hbox({
-                text(terminal_content) | flex,
-                vbox({
-                    text(dirs_content), 
-                    separator(),
-                    text(files_content),
-                })
-            }),
-            text(HELP_BAR_TEXT),
-        });
-    Screen screen = Screen::Create(Dimension::Full(), Dimension::Full());
+    Elements terminal_lines_texts = { };
+    Elements dirs_texts = { };
+    Elements files_texts = { };
+
+    Component all_components =
+        ResizableSplitRight(
+            Renderer([this] {return vbox({
+                text(L"Folders"),
+                vbox(dirs_texts), 
+                separator(),
+                text(L"Files"),
+                vbox(files_texts),
+            }); }),
+            Renderer([this] {return vbox(terminal_lines_texts) }),
+            &panel_size);
+    ScreenInteractive screen = ScreenInteractive::Fullscreen();
 };

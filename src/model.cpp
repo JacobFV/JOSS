@@ -23,43 +23,47 @@ void JOSSModel::handle_key_event(char key) {
 
         // if previous command was just the move up or down operation 
         // for the sidebar windows, don't actually execute it
-        bool did_only_move; did_only_move = false;
-        switch(curr_cmd().second[0]) {
+        //bool did_only_move; did_only_move = false;
+        if(curr_cmd()->second == "N" || curr_cmd()->second == "n") {
             // move displayed files and dirs sublist windows up and down
-            case 'N': // previous
-            case 'n': 
-                // increment displayed dirs and files sublist index
-                dirs_pos++;
-                files_pos++;
-                did_only_move = true;
-                break;
-            case 'P': // previous
-            case 'p': 
-                // decrement displayed dirs and files sublist index
-                dirs_pos--;
-                files_pos--;
-                did_only_move = true;
-            default:
-                break;
+            // previous
+            // increment displayed dirs and files sublist index
+            dirs_pos++;
+            files_pos++;
+            //did_only_move = true;
+
+            curr_cmd()->second.assign("");
+            break;
+        }
+        else if(curr_cmd()->second == "P" || curr_cmd()->second == "p") {
+            // previous
+            // decrement displayed dirs and files sublist index
+            dirs_pos--;
+            files_pos--;
+            //did_only_move = true;
+
+            curr_cmd()->second.assign("");
+            break;
         } 
+/*
         if(did_only_move) {
             //if(dirs_pos < 0) dirs_pos++;
             //if(dirs.size() > WINDOW_HEIGHT && dirs_pos == dirs.size() - WINDOW_HEIGHT) dirs_pos--;
             //if(files_pos < 0) files_pos++;
             //if(files.size() > WINDOW_HEIGHT && files_pos == files.size() - WINDOW_HEIGHT) files_pos--;
 
-            curr_cmd().second.assign("");
+            curr_cmd()->second.assign("");
 
             // we only moved the window so break and don't execute the command
             break;
-        }
+        }*/
 
 
         // if the command executed was not the actual last command,
         // it should now become the most recently executed command
         // for historical (uparrow, downarrow) reasons
-        all_cmds[all_cmds.size() - 1].first.assign(all_cmds[cursor_y].first);
-        all_cmds[all_cmds.size() - 1].second.assign(all_cmds[cursor_y].second);
+        all_cmds[all_cmds.size() - 1]->first.assign(all_cmds[cursor_y]->first);
+        all_cmds[all_cmds.size() - 1]->second.assign(all_cmds[cursor_y]->second);
         cursor_y = all_cmds.size() - 1;
         // now the most recent command is the one executed regardless
         // of previous cursor navigation through history
@@ -80,9 +84,9 @@ void JOSSModel::handle_key_event(char key) {
         // curr_cmd:   0123456  -> 012456
         // cursor_x:      4     ->    3 
         if (cursor_x != 0) {
-            curr_cmd().second.assign(
-                curr_cmd().second.substr(0, cursor_x-1) +
-                curr_cmd().second.substr(cursor_x)
+            curr_cmd()->second.assign(
+                curr_cmd()->second.substr(0, cursor_x-1) +
+                curr_cmd()->second.substr(cursor_x)
             );
             cursor_x--;
         }
@@ -91,15 +95,15 @@ void JOSSModel::handle_key_event(char key) {
         // on display: 0123_456 -> 0123_56
         // curr_cmd:   0123456  -> 012356
         // cursor_x:      4     ->    4
-        if (cursor_x == curr_cmd().second.length()-1) {
-            curr_cmd().second.assign(
-                curr_cmd().second.substr(0, 
-                    curr_cmd().second.length()-1));
+        if (cursor_x == curr_cmd()->second.length()-1) {
+            curr_cmd()->second.assign(
+                curr_cmd()->second.substr(0, 
+                    curr_cmd()->second.length()-1));
         } 
         else {
-            curr_cmd().second.assign(
-                curr_cmd().second.substr(0, cursor_x) +
-                curr_cmd().second.substr(cursor_x+1)
+            curr_cmd()->second.assign(
+                curr_cmd()->second.substr(0, cursor_x) +
+                curr_cmd()->second.substr(cursor_x+1)
             );
         }
         break;
@@ -108,18 +112,18 @@ void JOSSModel::handle_key_event(char key) {
     case 24: // up arrow
         cursor_y++;
         if (cursor_y == all_cmds.size()) cursor_y = all_cmds.size();
-        cursor_x = curr_cmd().second.length();
+        cursor_x = curr_cmd()->second.length();
         break;
     case 25: // down arrow
         cursor_y--;
         if (cursor_y < 0) cursor_y = 0;
-        cursor_x = curr_cmd().second.length();
+        cursor_x = curr_cmd()->second.length();
         break;
 
     // move cursor "_" left and right
     case 26: // right arrow
         cursor_x++;
-        if (cursor_x == curr_cmd().second.length()) cursor_x = curr_cmd().second.length();
+        if (cursor_x == curr_cmd()->second.length()) cursor_x = curr_cmd()->second.length();
         break;
     case 27: // left arrow
         cursor_x--;
@@ -128,13 +132,10 @@ void JOSSModel::handle_key_event(char key) {
 
     // data input    
     default: // a valid character
-        std::cout << "regular char" << std::endl;
         // curr_cmd: 0123_456 -> 0123x_456
         // cursor_x:     4    ->      5
-        char ch = key; // `insert` requires an lvalue char
-        curr_cmd().second.insert(static_cast<size_t>(cursor_x), &ch);
+        curr_cmd()->second.insert(cursor_x, 1, key);
         cursor_x++;
-        std::cout << "processed char" << std::endl;
         break;
     }
 }
@@ -147,7 +148,7 @@ void JOSSModel::start_new_cmd_line() {
     update_dirs_listing();
     update_files_listing();
 
-    all_cmds.push_back(CMD(cwd, ""));
+    all_cmds.push_back(new std::pair<std::string, std::string>(cwd, ""));
 
     cursor_x = 0;
     cursor_y = all_cmds.size() - 1;
@@ -167,10 +168,10 @@ void JOSSModel::exec_cmd() {
 
     // the compiler ends up linking a pointer either way
     // but  makes code more readable
-     auto cmd_str = curr_cmd().second;
+     auto cmd_str = curr_cmd()->second;
 
     // content checking
-    if(curr_cmd().second.length() == 0) return; // empty command
+    if(curr_cmd()->second.length() == 0) return; // empty command
 
     // attempt to parse command
     try {
@@ -379,7 +380,6 @@ std::string JOSSModel::get_time() {
 
 void JOSSModel::update_dirs_listing() {
     dirs.clear();
-    dirs.push_back("..");
 
     // modified from assignment 1 template
     struct dirent* de;
@@ -410,7 +410,7 @@ void JOSSModel::update_files_listing() {
 }
 
 
- CMD JOSSModel::curr_cmd() {
+CMD JOSSModel::curr_cmd() {
     return all_cmds[cursor_y];
 }
 

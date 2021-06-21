@@ -26,13 +26,22 @@ project(joss
   VERSION 1.0.0
 )
 
-add_executable(joss src/main.cpp src/view src/model src/controller src/header src/utils)
+set(CMAKE_BUILD_TYPE Debug) # debug with gdb
+add_executable(joss 
+  src/main.cpp 
+  src/view 
+  src/model 
+  src/controller 
+  src/header 
+  src/utils
+  src/components/resizable_split
+)
 target_include_directories(joss PRIVATE src)
 
 target_link_libraries(joss
-  PRIVATE ftxui::screen
   PRIVATE ftxui::dom
-  PRIVATE ftxui::component # Not needed for this example.
+  PRIVATE ftxui::screen
+  PRIVATE ftxui::component
 )
 
 # C++17 is used. We requires fold expressions at least.

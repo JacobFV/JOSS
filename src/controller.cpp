@@ -20,7 +20,7 @@ void JOSSController::repl() {
         sleep(3);
         // parse
         model->handle_key_event(key);
-        std::cout << "Handled key" << std::endl;
+        //std::cout << "Handled key" << std::endl;
         // maybe update viewport
         update_view();
     }
@@ -37,10 +37,10 @@ void JOSSController::update_view() {
 
     // print dirs
     view->set_dirs(
-        model->files.begin() + model->files_pos, 
-        model->files.begin() + std::min(
-            model->files_pos + NUM_FILES,
-            static_cast<int>(model->files.size()))
+        model->dirs.begin() + model->dirs_pos, 
+        model->dirs.begin() + std::min(
+            model->dirs_pos + NUM_DIRS,
+            static_cast<int>(model->dirs.size()))
     );
 
     // print files
