@@ -13,7 +13,9 @@ JOSSView::JOSSView() {
 void JOSSView::refresh() {
     // everything is already defined by now
     screen.Clear();
+    //Render(screen, renderer->Render());
     screen.Loop(renderer);
+    //screen.Print();
 }
 
 
