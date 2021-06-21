@@ -1,3 +1,6 @@
+#ifndef JOSS_VIEW
+#define JOSS_VIEW
+
 #include "header.hpp"
 
 #include "ftxui/dom/node.hpp"
@@ -6,6 +9,7 @@
 #include "ftxui/screen/box.hpp"
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/screen_interactive.hpp"
+#include "ftxui/component/input.hpp"
 
 using namespace ftxui;
 
@@ -16,8 +20,9 @@ public:
 
     void refresh();
     int get_terminal_height();
-
-    void set_terminal_content(std::string val);
+    void set_terminal_content(std::vector<std::string> lines,
+                              std::string* cwd, 
+                              void *(call_fn)(std::string cmd));
     void set_dirs(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_files(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_help_bar_text(std::string val);
@@ -33,7 +38,7 @@ private:
     Elements dirs_texts = { };
     Elements files_texts = { };
 
-    Component all_components =
+    Component renderer =
         ResizableSplitRight(
             Renderer([this] {return vbox({
                 text(L"Folders"),
@@ -42,7 +47,9 @@ private:
                 text(L"Files"),
                 vbox(files_texts),
             }); }),
-            Renderer([this] {return vbox(terminal_lines_texts) }),
+            Renderer([this] {return vbox(terminal_lines_texts); }),
             &panel_size);
     ScreenInteractive screen = ScreenInteractive::Fullscreen();
 };
+
+#endif

@@ -11,6 +11,8 @@ JOSSModel::JOSSModel() {
 
 
 void JOSSModel::handle_key_event(char key) {
+    // THIS FUNCTION IS DEPRECATED AND REPLACED BY A `ftxui::input` COMPONENT
+
     // Covers all the logic required to properly respond to an incoming key
     // by typing characters, executing commands, navigating, etc.
 

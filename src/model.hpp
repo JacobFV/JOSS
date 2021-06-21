@@ -1,3 +1,6 @@
+#ifndef JOSS_MODEL
+#define JOSS_MODEL
+
 #include "header.hpp"
 
 
@@ -51,3 +54,5 @@ public:
 };
 
 enum Sorting { byDate, byName, bySize };
+
+#endif
