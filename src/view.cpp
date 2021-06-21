@@ -6,7 +6,7 @@
 
 
 JOSSView::JOSSView() {
-
+    
 }
 
 
@@ -31,16 +31,13 @@ void JOSSView::set_terminal_content(JOSSController* controller) {
             ftxui::text(to_wstring(line)));
     }
 
-    ftxui::Component input;
-    std::wstring input_contents;
-    input = ftxui::Input(&input_contents, "");
-    ftxui::InputBase::From(input)->on_enter = [&] {
+    ftxui::InputBase::From(cmd_input)->on_enter = [&] {
         controller->handle_enter(ftxui::to_string(input_contents));
     };
     terminal_lines_texts.push_back(
         ftxui::hbox({
             ftxui::text(ftxui::to_wstring(controller->model->cwd + " $ ")),
-            input->Render()
+            cmd_input->Render()
         })
     );
 }

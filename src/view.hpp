@@ -33,10 +33,13 @@ private:
     std::wstring dirs_content;
     std::wstring files_content;
     int panel_size = 24;
+    std::wstring input_contents;
 
     Elements terminal_lines_texts = { };
     Elements dirs_texts = { };
     Elements files_texts = { };
+
+    Component cmd_input = ftxui::Input(&input_contents, "");
     Component renderer =
         ResizableSplitRight(
             Renderer([&] {return vbox({
@@ -46,8 +49,10 @@ private:
                 text(L"Files"),
                 vbox(files_texts),
             }); }),
-            Renderer([&] {return vbox(terminal_lines_texts); }),
+            Renderer(cmd_input, [&] {return vbox(terminal_lines_texts); }),
             &panel_size);
+    
+    //void get_terminal_line_vbox();
 };
 
 #endif
