@@ -32,7 +32,7 @@ void JOSSView::set_terminal_content(JOSSController* controller) {
     }
 
     ftxui::InputBase::From(cmd_input)->on_enter = [&] {
-        controller->handle_enter(ftxui::to_string(input_contents));
+        controller->handle_enter(ftxui::to_string(this->input_contents));
     };
     terminal_lines_texts.push_back(
         ftxui::hbox({

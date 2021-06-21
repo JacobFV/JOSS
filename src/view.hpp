@@ -25,7 +25,7 @@ public:
     void set_dirs(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_files(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_help_bar_text(std::string val);
-    ScreenInteractive screen = ScreenInteractive::Fullscreen();
+    ScreenInteractive screen = ScreenInteractive::TerminalOutput();
 
 private:
     // use newlines to separate elements
@@ -49,10 +49,8 @@ private:
                 text(L"Files"),
                 vbox(files_texts),
             }); }),
-            Renderer(cmd_input, [&] {return vbox(terminal_lines_texts); }),
+            Renderer(cmd_input, [&] {return vbox(this->terminal_lines_texts); }),
             &panel_size);
-    
-    //void get_terminal_line_vbox();
 };
 
 #endif

@@ -8,7 +8,7 @@
 class JOSSModel {
 public:
 
-    std::string cwd; // does not include trailing `/`
+    std::string cwd = ""; // does not include trailing `/`
 
     std::vector<std::string> dirs = std::vector<std::string>();
     std::vector<std::string> files = std::vector<std::string>();

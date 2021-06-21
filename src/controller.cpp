@@ -42,10 +42,10 @@ void JOSSController::update_view() {
 
 void JOSSController::handle_enter(std::string cmd) {
     // just enter logic
-    model->print_lines({model->cwd + " $ " + cmd});
-    model->exec_cmd(cmd);
-    model->start_new_cmd_line();
-    update_view();
+    this->model->print_lines({this->model->cwd + " $ " + cmd});
+    this->model->exec_cmd(cmd);
+    this->model->start_new_cmd_line();
+    this->update_view();
 }
 
 #endif
