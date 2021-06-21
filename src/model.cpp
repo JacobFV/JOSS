@@ -57,42 +57,21 @@ void JOSSModel::exec_cmd(std::string cmd) {
         while (*pos++ != ' ') ;
             auto cmd_cmd = make_string_lowercase(cmd.substr(0, pos-cmd.begin()));
 
-        // TODO: p prev and n next
-        /*// maybe execute command
-
-        // if previous command was just the move up or down operation 
-        // for the sidebar windows, don't actually execute it
-        //bool did_only_move; did_only_move = false;
-        if(curr_cmd()->second == "N" || curr_cmd()->second == "n") {
-            // move displayed files and dirs sublist windows up and down
-            // previous
-            // increment displayed dirs and files sublist index
-            dirs_pos++;
-            files_pos++;
-            //did_only_move = true;
-
-            curr_cmd()->second.assign("");
-            break;
-        }
-        else if(curr_cmd()->second == "P" || curr_cmd()->second == "p") {
-            // previous
+        // previous
+        if(cmd_cmd=="p" || 
+           cmd_cmd=="prev" ||
+           cmd_cmd=="previous") {
             // decrement displayed dirs and files sublist index
-            dirs_pos--;
-            files_pos--;
-            //did_only_move = true;
-
-            curr_cmd()->second.assign("");
-            break;
-        } 
-        
-        print_lines({fmt_cmd(curr_cmd(), -1)});
-
-        exec_cmd(); 
-        
-        start_new_cmd_line();*/
-
+            dirs_pos--; files_pos--;
+        }
+        // next
+        if(cmd_cmd=="n" || 
+           cmd_cmd=="next") {
+            // decrement displayed dirs and files sublist index
+            dirs_pos++; files_pos++;
+        }
         // open file in editor
-        if(cmd_cmd=="e" || 
+        else if(cmd_cmd=="e" || 
            cmd_cmd=="edit") {
             edit_file(files[get_file_id(pos, cmd)]);
         }

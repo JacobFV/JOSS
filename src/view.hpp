@@ -25,6 +25,7 @@ public:
     void set_dirs(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_files(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
     void set_help_bar_text(std::string val);
+    ScreenInteractive screen = ScreenInteractive::Fullscreen();
 
 private:
     // use newlines to separate elements
@@ -36,19 +37,17 @@ private:
     Elements terminal_lines_texts = { };
     Elements dirs_texts = { };
     Elements files_texts = { };
-
     Component renderer =
         ResizableSplitRight(
-            Renderer([this] {return vbox({
+            Renderer([&] {return vbox({
                 text(L"Folders"),
                 vbox(dirs_texts), 
                 separator(),
                 text(L"Files"),
                 vbox(files_texts),
             }); }),
-            Renderer([this] {return vbox(terminal_lines_texts); }),
+            Renderer([&] {return vbox(terminal_lines_texts); }),
             &panel_size);
-    ScreenInteractive screen = ScreenInteractive::Fullscreen();
 };
 
 #endif

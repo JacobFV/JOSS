@@ -6,16 +6,14 @@
 
 
 JOSSView::JOSSView() {
-    
+
 }
 
 
 void JOSSView::refresh() {
     // everything is already defined by now
+    screen.Clear();
     screen.Loop(renderer);
-    //screen.Print();
-    //Render(screen, document);
-    //std::cout << screen.ToString() << std::endl;
 }
 
 

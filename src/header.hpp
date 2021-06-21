@@ -46,11 +46,14 @@ const std::vector<std::string> WELCOME_CONTENT = {
         " \\/_______/   \\/_________/   \\_____\\/    \\_____\\/        ",                              
         "   Jacob's      Operating      System      Shell         ",
         "",
-        "Welcome to JOSS! Please use key bindings listed on the bottom bar",
-        " and directory/file identifiers listed in the right panel to interface",
-        " with your operating system.",
-        "Use the N and P commands to browse through the working directory.",
-        "Use up, down, right, left arrow keys to navigate through command history."
+        "Welcome to JOSS!",
+        "Please use key bindings listed on the bottom bar",
+        "and directory/file identifiers listed in the",
+        "right panel to interface with your operating system.",
+        "",
+        "E edit | R run | C cd | S sort | I info | D display",
+        "M move | R remove | Q quit | N next | P prev | H help",
+        "",
         "Type HELP for more assistance using JOSS."
 };
 
